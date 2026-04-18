@@ -1,0 +1,41 @@
+{
+  "ticker": "AAPL",
+  "model_name": "logistic_regression",
+  "feature_columns": [
+    "MA_20_Norm",
+    "MA_50_Norm",
+    "RSI_14_Norm",
+    "MACD_Norm",
+    "MACD_Signal_Norm",
+    "MACD_Hist_Norm",
+    "Daily_Return_Norm"
+  ],
+  "accuracy": 0.575,
+  "classification_report": {
+    "0": {
+      "precision": 0.5833333333333334,
+      "recall": 0.3684210526315789,
+      "f1-score": 0.45161290322580644,
+      "support": 19.0
+    },
+    "1": {
+      "precision": 0.5714285714285714,
+      "recall": 0.7619047619047619,
+      "f1-score": 0.6530612244897959,
+      "support": 21.0
+    },
+    "accuracy": 0.575,
+    "macro avg": {
+      "precision": 0.5773809523809523,
+      "recall": 0.5651629072681704,
+      "f1-score": 0.5523370638578011,
+      "support": 40.0
+    },
+    "weighted avg": {
+      "precision": 0.5770833333333334,
+      "recall": 0.575,
+      "f1-score": 0.5573732718894009,
+      "support": 40.0
+    }
+  }
+}
