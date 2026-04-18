@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Trading Expert System</title>
+    <style>
+        :root {
+            --bg: #f5efe4;
+            --panel: #fffdf8;
+            --ink: #1f2937;
+            --muted: #6b7280;
+            --accent: #0f766e;
+            --accent-soft: #dff4ef;
+            --line: #e7dcc8;
+            --good: #166534;
+            --warn: #92400e;
+            --bad: #991b1b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            background:
+                radial-gradient(circle at top left, rgba(245, 158, 11, 0.14), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.12), transparent 30%),
+                var(--bg);
+            color: var(--ink);
+        }
+
+        .page {
+            width: min(1100px, calc(100% - 32px));
+            margin: 32px auto 48px;
+        }
+
+        .hero {
+            padding: 28px;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(255, 253, 248, 0.96), rgba(250, 243, 230, 0.96));
+            box-shadow: 0 18px 40px rgba(31, 41, 55, 0.08);
+        }
+
+        h1, h2 {
+            margin: 0 0 12px;
+            font-weight: 600;
+        }
+
+        .lede {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        form {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        input, button {
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            padding: 14px 16px;
+            font-size: 1rem;
+        }
+
+        input {
+            flex: 1 1 260px;
+            background: #fff;
+        }
+
+        button {
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            min-width: 140px;
+            border-color: var(--accent);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 24px;
+        }
+
+        .card {
+            padding: 22px;
+            border-radius: 22px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            box-shadow: 0 14px 28px rgba(31, 41, 55, 0.05);
+        }
+
+        .metric {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+
+        .BUY { background: #dcfce7; color: var(--good); }
+        .SELL { background: #fee2e2; color: var(--bad); }
+        .HOLD { background: #fef3c7; color: var(--warn); }
+
+        .label {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .error {
+            margin-top: 18px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: #fff1f2;
+            color: var(--bad);
+            border: 1px solid #fecdd3;
+        }
+
+        .chart {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 22px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            box-shadow: 0 14px 28px rgba(31, 41, 55, 0.05);
+        }
+
+        @media (max-width: 800px) {
+            .grid, .metric {
+                grid-template-columns: 1fr;
+            }
+
+            .page {
+                width: min(100% - 20px, 1100px);
+                margin-top: 20px;
+            }
+
+            .hero, .card, .chart {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <h1>Stock Trading Expert System</h1>
+            <p class="lede">Enter a ticker to view the latest AI-assisted signal, technical context, and a quick price chart.</p>
+            <form method="post">
+                <input type="text" name="ticker" placeholder="AAPL, TSLA, RELIANCE.NS" value="{{ ticker }}" required>
+                <button type="submit">Analyze</button>
+            </form>
+
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+        </section>
+
+        {% if result %}
+            <section class="grid">
+                <article class="card">
+                    <h2>{{ result.ticker }} on {{ result.date }}</h2>
+                    <p><span class="pill {{ result.signal }}">{{ result.signal }}</span></p>
+                    <p>{{ result.explanation }}</p>
+                </article>
+
+                <article class="card">
+                    <h2>Market Snapshot</h2>
+                    <div class="metric">
+                        <div>
+                            <div class="label">Current Price</div>
+                            <div class="value">{{ "%.2f"|format(result.current_price) }}</div>
+                        </div>
+                        <div>
+                            <div class="label">Probability Up</div>
+                            <div class="value">
+                                {% if result.probability_up is not none %}
+                                    {{ "%.2f"|format(result.probability_up) }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="label">RSI 14</div>
+                            <div class="value">{{ "%.2f"|format(result.rsi) }}</div>
+                        </div>
+                        <div>
+                            <div class="label">MA 20</div>
+                            <div class="value">{{ "%.2f"|format(result.ma_20) }}</div>
+                        </div>
+                        <div>
+                            <div class="label">MACD</div>
+                            <div class="value">{{ "%.4f"|format(result.macd) }}</div>
+                        </div>
+                        <div>
+                            <div class="label">MACD Signal</div>
+                            <div class="value">{{ "%.4f"|format(result.macd_signal) }}</div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            {% if chart_html %}
+                <section class="chart">
+                    {{ chart_html|safe }}
+                </section>
+            {% endif %}
+        {% endif %}
+    </main>
+</body>
+</html>
